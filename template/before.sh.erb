@@ -41,6 +41,9 @@ PASSWORD_SHA1="$(echo -n "${password}${SALT}" | openssl dgst -sha1 | awk '{print
 # `script.sh.erb` file when launching the Jupyter Notebook server.
 export CONFIG_FILE="${PWD}/config.py"
 
+# to resolve the error when deleting a file in vast
+# “send2trash f`1ailed: [Errno 13] Permission denied: b'/gpfs/gibbs/.Trash-23102'”
+# add c.FileContentsManager.delete_to_trash = False
 # Generate Jupyter configuration file with secure file permissions
 (
 umask 077

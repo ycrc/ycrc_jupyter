@@ -1,10 +1,10 @@
 # Job submission configuration file
 
-# process advance job options
+# process advanced job options
 <%- 
 if ! advanced_job_options.blank? then
 
-  require "/share/support/public/ood/ruby/hostspecs.rb"
+  require "/opt/ood/lib/hostspecs.rb"
   host_specs = getHostSpecs()
   libpath = host_specs[:libpath]
   require libpath+"/process_advanced_options.rb"
