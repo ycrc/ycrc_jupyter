@@ -1,4 +1,11 @@
+# Batch Connect app configuration file
 <%
+app_name = "Jupyter"
+app_root = "/var/www/ood/apps/modules"+"/"+app_name
+# if $HOME/ondemand/conda-jupyter-env-list.txt does not exist, run ycrc_conda_env.sh to create it.
+if not File.size?(ENV["HOME"]+"/ondemand/conda-jupyter-env-list.txt")
+    `/apps/bin/ycrc_conda_env.sh update > /dev/null 2>&1`
+end
 require "/opt/ood/lib/hostspecs.rb"
 host_specs = getHostSpecs()
 libpath = host_specs[:libpath]
@@ -6,16 +13,14 @@ hostname = host_specs[:host]
 
 require libpath+"/process_partitions.rb"
 partitions = processPartitions(libpath)
-
-app_name = "Jupyter"
-app_root = "/var/www/ood/apps/modules"+"/"+app_name
 %>
+
 ---
 cluster: <%= hostname %>
 title: <%= app_name %>
 form:
   - version
-  - jupyterlab_mode
+  - jupyterlab_switch
   - extra_jupyter_args
   - bc_num_hours
   - bc_num_cores
@@ -28,20 +33,44 @@ form:
   - advanced_options
   - bc_account
   - advanced_job_options
+
 attributes:
   version:
     widget: "select"
     label: <% app_name %> version
+    # Start over each time with module version as default
+    cacheable: false
+    help: |
+      - You can create your own Jupyter environment with
+
+              conda create -n myenv jupyter jupyterlab
+
+      - If you have installed or deleted a conda environment, run the following command
+        in a terminal to update OOD.
+
+              ycrc_conda_env.sh update
+
+      - For more information about conda, please visit our
+        [user guide](https://docs.ycrc.yale.edu/clusters-at-yale/guides/conda/#the-miniconda-module).
     options:
       <% IO.foreach(app_root+"/modules") do |line| %>
-      - [ "<%= line %>" ]
+      - [ "<%= line %>", data-has-jupyterlab: true ]
       <% end %>
-  jupyterlab_mode:
-    widget: "radio"
-    value: "1"
-    options:
-      - ["Jupyter Lab", "1"]
-      - ["Jupyter Notebook", "0"]
+      <%
+      conda_envs = `cat ${HOME}/ondemand/conda-jupyter-env-list.txt`.split
+      conda_envs.each do |conda_env|
+      conda_env_split = conda_env.split(":")
+      %>
+      - [
+              "conda: <%= conda_env_split[0] %>", "__conda__:<%= conda_env_split[0] %>",
+          data-has-jupyterlab: <%= conda_env_split[1] %>
+        ]
+      <% end %>
+
+  jupyterlab_switch:
+    widget: check_box
+    label: Start Jupyterlab instead of Jupyter Notebook
+
  # Any extra command line arguments to feed to the `jupyter notebook ...`
   # command that launches the Jupyter notebook within the batch job
   extra_jupyter_args: ""

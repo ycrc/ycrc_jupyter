@@ -16,7 +16,12 @@ module purge
 source $HOME/.bashrc
 
 # load JupyterNotebook
-module load <%= context.version %>
+if [[ <%= context.version %> == "__conda__:"* ]];  then 
+  module load miniconda
+  conda activate $(echo <%= context.version %>|cut -d: -f2)
+else 
+  module load $(echo <%= context.version %>|cut -d: -f2)
+fi
 
 <% if context.additional_modules != "" %>
 module load <%= context.additional_modules %>
@@ -24,4 +29,4 @@ module load <%= context.additional_modules %>
 
 # Launch the Jupyter Notebook Server
 set -x
-jupyter <%= context.jupyterlab_mode == "1" ? "lab" : "notebook" %> --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>
+jupyter <%= context.jupyterlab_switch == "1" ? "lab" : "notebook" %> --config="${CONFIG_FILE}" <%= context.extra_jupyter_args %>

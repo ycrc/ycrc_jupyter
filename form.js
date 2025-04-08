@@ -24,7 +24,7 @@ function toggle_visibility_of_form_group(form_id, show) {
  * Looking for the value of data-has-jupyterlab
  */
 function toggle_jupyterlab_switch_visibility() {
-  let custom_environment_input = $('#batch_connect_session_context_custom_environment');
+  let version_input = $('#batch_connect_session_context_version');
 
   // Allow for jupyter_swtich control not existing
   if ( ! ($('#batch_connect_session_context_jupyterlab_switch').length > 0) ) {
@@ -33,7 +33,7 @@ function toggle_jupyterlab_switch_visibility() {
 
   toggle_visibility_of_form_group(
     '#batch_connect_session_context_jupyterlab_switch',
-    custom_environment_input.find(':selected').data('has-jupyterlab')
+    version_input.find(':selected').data('has-jupyterlab')
   );
 }
 
@@ -142,11 +142,11 @@ function toggle_advanced_options_visibility() {
 }
 
 /**
- * Sets the change handler for the custom_environment select.
+ * Sets the change handler for the version selection.
  */
-function set_custom_environment_change_handler() {
-  let custom_environment_input = $('#batch_connect_session_context_custom_environment');
-  custom_environment_input.change(custom_environment_change_handler);
+function set_version_change_handler() {
+  let version_input = $('#batch_connect_session_context_version');
+  version_input.change(_change_handler);
 }
 
 function set_partition_change_handler() {
@@ -160,9 +160,9 @@ function set_advanced_options_handler() {
 }
 
 /**
- * Update UI when custom_environment changes
+ * Update UI when version changes
  */
-function custom_environment_change_handler() {
+function version_change_handler() {
   toggle_jupyterlab_switch_visibility();
 }
 
@@ -187,7 +187,7 @@ fix_num_hours();
 toggle_advanced_options_visibility();
 
 // Install event handlers
-set_custom_environment_change_handler();
+set_version_change_handler();
 set_partition_change_handler();
 set_advanced_options_handler();
 
