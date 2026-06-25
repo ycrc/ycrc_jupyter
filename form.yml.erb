@@ -43,16 +43,15 @@ attributes:
     help: |
       - You can create your own Jupyter environment with
 
-              conda create -n myenv jupyter jupyterlab
+              # 1. Create environment
+              conda create -n myenv notebook
 
-      - If you have installed or deleted a conda environment, run the following command
-        in a terminal to update OOD.
-
+              # 2. Add it to the list used for the OOD Jupyter menu
               ycrc_conda_env.sh update
 
-      - For more information about conda, please visit our
-        [user guide](https://docs.ycrc.yale.edu/clusters-at-yale/guides/conda/#the-miniconda-module).
-    options:
+              # 3. Now refresh the OOD Jupyter menu by clicking:
+              #         Develop -> Restart Web Server
+options:
       <% IO.foreach(app_root+"/modules") do |line| %>
       - [ "<%= line %>", data-has-jupyterlab: true ]
       <% end %>
